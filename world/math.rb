@@ -23,6 +23,13 @@ class RestrictedValue
 		end
 	end
 
+	def clamp(min,max)
+		@min=min;
+		@max=max;
+		set(@value);
+		get();
+	end
+
 	#######
 	private
 	#######
@@ -79,5 +86,3 @@ class ChangingValue < RestrictedValue
 		@ratio=ratio;
 	end
 end
-
-puts('Math.');

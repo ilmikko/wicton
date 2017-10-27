@@ -2,9 +2,15 @@ require('./math.rb');
 
 class Task
 	def self.idle;Task.new(:idle);end
+
 	def type;@type;end
 	def args;@args;end
 	def obj;@obj;end
+
+	#######
+	private
+	#######
+
 	def initialize(type,*args,**obj)
 		type="task_#{type}".to_sym;
 		@type=type;
@@ -14,14 +20,25 @@ class Task
 end
 
 class Traits
-	def sociable;@dict[:sociable];end
-	def impulsive;@dict[:impulsive];end
-	def smart;@dict[:smart];end
-	def carefree;@dict[:carefree];end
-
-	def dict;@dict;end
-	
+	# Proficiency for tasks
 	def proficiency;@proficiency;end
+
+	# Get traits directly if possible
+	def method_missing(type)
+		if @dict.key?type;
+			return @dict[type];
+		else
+			super;
+		end
+	end
+
+	def describe
+		@dict.map{|k,v| "Trait #{k}: #{v}"}
+	end
+
+	#######
+	private
+	#######
 
 	def initialize()
 		@dict={
@@ -55,6 +72,10 @@ class Acquaintance
 	end
 	def similarity=(v)
 		@similarity=v.clamp(0,1);
+	end
+
+	def describe;
+		"f: #{@frustration} r: #{@relationship} e: #{@excitement} s: #{@similarity}"
 	end
 
 	def initialize()
@@ -105,6 +126,13 @@ class Relationships
 		acq.relationship-=0.1*boost;
 		acq.frustration+=acq.getDisappointment()*boost;
 	end
+
+	def describe;
+		@actors.map{|name,acq|
+			["#{name}:",acq.describe]
+		}
+	end
+
 	def initialize()
 		@actors={};
 	end
@@ -144,6 +172,7 @@ class Actor
 		end
 		return names;
 	end
+
 	def brain_interval;@interval;end
 	def brain_interval=(v);
 		# Take into account the smartness trait of the owner.
@@ -153,6 +182,16 @@ class Actor
 		absolute=-(v*smartness);
 		dampening=@@smart_dampening; # How much the value actually affects
 		@brain_interval=v+absolute*dampening;
+	end
+
+	def describe;
+		[
+			"Name: #{self.fullname} (#{self.name})",
+			"Location: #{self.location}",
+			"Status: #{self.status}",
+			"Relationships:",@relationships.describe,
+			"Traits:",@traits.describe
+		]
 	end
 
 	def name;@names[0];end
@@ -220,12 +259,17 @@ class Actor
 					end
 				rescue StandardError => e
 					$console.error("#{self.name} BRAIN: #{e}");
+					$console.error("#{e.backtrace}");
 				end
 				sleep @brain_interval;
 			end
 		}
 
 		@@list.push(self);
+	end
+
+	def move(place)
+		addTask(:move,place.to_sym);
 	end
 
 	def knowsPlace?(place)
@@ -344,7 +388,7 @@ class Actor
 			# Try and find a place to go to
 			frustrations=$world.places[@location].connections.sort_by{|place| (@spatialfrustration[@place]||0) };
 			#$console.debug("#{self.name}: Spatial frustrations: #{frustrations}");
-			addTask(:move,frustrations[0].to_sym);
+			move(frustrations[0].to_sym);
 		end
 	end
 

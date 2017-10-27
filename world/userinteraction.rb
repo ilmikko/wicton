@@ -13,7 +13,7 @@ class InputConsole
 		@menus={
 			default: {
 				'x':->{
-					exit if $input.confirm?('Are you sure you want to end the simulation?',default: false);
+					exit if confirm?('Are you sure you want to end the simulation?',default: false);
 				},
 				'h':->{
 					$console.info('Can anyone help you?');
@@ -36,21 +36,17 @@ class InputConsole
 				'a':->{
 					#Actors
 					$console.info('ACTORS');
-					$input.choose(Actor.list,->(actor){
+					choose(Actor.list,->(actor){
 						$console.info("ACTORS > #{actor.name}");
-						$console.info("Name: #{actor.fullname} (#{actor.name})");
-						$console.info("Location, status, frust: #{actor.location}, #{actor.status}, #{actor.frustration}");
-						$console.info("Traits: ");
-						actor.traits.dict.each{ |trait,value|
-							$console.info("#{trait} = #{value}");
-						}
+						$console.info(["Details:",actor.describe].flatten.join("\r\n"));
 
-						$input.branch({
+						branch({
 							'1. Move to':->{
 								$console.info("ACTORS > #{actor.name} > MOVE TO");
 								$console.info("Available locations:");
-								$input.choose($world.places.keys,->(location){
-									actor.addTask(:move,location);
+
+								choose($world.places.keys,->(location){
+									actor.move(location);
 								});
 							}
 						});
@@ -59,11 +55,11 @@ class InputConsole
 				'p':->{
 					#Inspect
 					$console.info('PLACES');
-					self.choose($world.places.values,->(place){
+					choose($world.places.values,->(place){
 						$console.info("PLACES > #{place.name}");
-						$console.info("Population: #{place.actors.size}/#{place.size}");
-						$console.info("Connected to: #{place.connections}");
-						self.branch({
+						$console.info(["Details:",place.describe].flatten.join("\r\n"))
+
+						branch({
 							'1. Actors':->{
 								# List actors
 								$console.info("PLACES > #{place.name} > ACTORS");

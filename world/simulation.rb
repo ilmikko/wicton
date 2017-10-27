@@ -27,7 +27,7 @@ $world=World.new({
 # start with a random number of actors in the plaza and see what happens
 # drop actors with a slight random delay so that we won't be having them all 'think' in simultaneous instances
 $world.populate(:plaza,1);
-$world.populate(:room,1);
+$world.populate(:room,4);
 
 require('./userinteraction.rb');
 

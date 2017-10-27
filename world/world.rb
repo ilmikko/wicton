@@ -1,21 +1,34 @@
 class Place
 	def name;@name;end
 	def size;@size;end
+
 	def actors;
 		Actor.list.select{ |item| item.location==@name }
 	end
+
 	def connections;@connections;end
-	def initialize(name,size: 5, connections: [])
-		@name=name;
-		@size=size;
-		@actors=[];
-		@connections=connections;
+
+	def describe;
+		actors=self.actors;
+		[
+			"Name: #{@name}",
+			"Pop: #{actors.length/@size}",
+			"Actors: #{actors.map{|a| a.name}}"
+		]
 	end
+
 	def removeActor(actor)
 		@actors.delete(actor);
 	end
 	def putActor(actor)
 		@actors.push(actor);
+	end
+
+	def initialize(name,size: 5, connections: [])
+		@name=name;
+		@size=size;
+		@actors=[];
+		@connections=connections;
 	end
 end
 
