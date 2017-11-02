@@ -133,13 +133,55 @@ Algorithm.add('DoubleTrouble',function(question){
 		);
 	}
 	return res;
-},function(q,a){
-	
+});
+
+// See below (reverse)
+Algorithm.add('Sliderspider reverse',function(question){
+        var words=question.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').split(/\s+/).reverse();
+        var o=this.cached,w;
+        var confidence=0;
+	var minconfidence=0; // DEBUG
+
+        for (let word of words){
+                confidence++;
+                if (word in o){
+                        w=o[word];
+                        o=w.children;
+                }else if (w) break; else return;
+        }
+
+	console.warn(JSON.stringify(w));
+
+	if (confidence<minconfidence) return;
+
+        var ret=[];
+        if (w.exact.length>0){
+		// There were exact matches
+                for (let g=0,glen=w.exact.length;g<glen;g++){
+                        ret.push({confidence:0.9*(1/(-confidence*1.2-1)+1),result:w.exact[g].a});
+                }
+        }else{
+		// Fuzzy matches
+                for (let g=0,glen=w.all.length;g<glen;g++){
+                        ret.push({confidence:0.7*(1/(-confidence*1.2-1)+1),result:w.all[g].a});
+                }
+        }
+        return ret;
+},function(k,v){
+        var words=k.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').split(/\s+/).reverse();
+        var o=this.cached,w;
+        for (let word of words){
+                if (!(word in o)) o[word]={children:{},all:[],exact:[]};
+                w=o[word];
+                o=o[word].children;
+                if (v.a.length>0) w.all.push(v); // Goes through all the generations
+        }
+        if (v.a.length>0) w.exact.push(v); // Goes only for the last one
 });
 
 // Perfect match but only with specific words (sliding match) (intensive but good)
 Algorithm.add('Sliderspider',function(question){
-        var words=question.trim().split(/\s+/);
+        var words=question.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').split(/\s+/);
         var o=this.cached,w;
         var confidence=0;
 	var minconfidence=0; // DEBUG
@@ -168,7 +210,7 @@ Algorithm.add('Sliderspider',function(question){
         }
         return ret;
 },function(k,v){
-        var words=k.trim().split(/\s+/);
+        var words=k.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').split(/\s+/);
         var o=this.cached,w;
         for (let word of words){
                 if (!(word in o)) o[word]={children:{},all:[],exact:[]};
