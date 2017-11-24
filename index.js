@@ -2,6 +2,8 @@ const mongo=require('mongodb').MongoClient;
 
 process.chdir(__dirname);
 
+console.log("Dev version");
+
 global.extend=function(a,b){for (let g in b) a[g]=b[g];return b;}
 
 global.type=function type(o){
