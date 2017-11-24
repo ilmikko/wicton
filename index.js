@@ -1,5 +1,6 @@
 const mongo=require('mongodb').MongoClient;
 
+//process.env.LOGLEVEL=100;
 process.chdir(__dirname);
 
 console.log("Dev version");
@@ -37,6 +38,9 @@ console.command.addmode('talk',function(input){
         }else brain.process(input);
 });
 console.command.chmode('talk');
+
+console.back("Feel free to start chatting with Wicton!");
+console.back("Type in /help if you want help!");
 
 console.command.add('say',function(){
         var string=[];
