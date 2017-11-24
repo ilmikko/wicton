@@ -1,6 +1,6 @@
 const mongo=require('mongodb').MongoClient;
 
-//process.env.LOGLEVEL=100;
+process.env.LOGLEVEL=100;
 process.chdir(__dirname);
 
 global.extend=function(a,b){for (let g in b) a[g]=b[g];return b;}
@@ -19,7 +19,7 @@ require('./src/console.js');
 global.data=require('./src/data.js');
 global.brain=require('./brain/brain.js');
 
-brain.setMode(1);
+brain.setMode(0);
 
 let url='mongodb://localhost:27017/wicton';
 mongo.connect(url,function(err,db){
