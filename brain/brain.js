@@ -15,7 +15,7 @@ module.exports={
 
                 memory.remember('messages',string);
                 memory.remember('responses',string);
-                console.log("> \x1b[34m"+string+"\x1b[0m");
+                console.back("\x1b[34m"+string+"\x1b[0m");
         },
         learn:function(question,answer){
                 memory.addConnection(question,answer);
